@@ -30,13 +30,8 @@ if($_GET['file']){
     echo json_encode($data, JSON_PRETTY_PRINT);
     die();
 }
-<<<<<<< HEAD
 
-//Create connection to the database   
-=======
- 
 //Create connection to the database
->>>>>>> parent of f75c6b4... Revert "."
 $conn = new mysqli($c['server_address'], $c['username'], $c['password'], $c['db_name']);
 
 //Check if the connection has any errors
