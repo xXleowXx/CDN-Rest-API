@@ -57,6 +57,7 @@ if ($result = $conn -> query("SELECT * FROM `access` WHERE token = '". $token ."
     $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"token_invalid", "error_details" => "Provided token does not exist in our database");
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_PRETTY_PRINT);
+    $conn->close();
     die();
   }
 
@@ -66,15 +67,47 @@ if ($result = $conn -> query("SELECT * FROM `access` WHERE token = '". $token ."
     $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"query_failed", "error_details" => "MYSQL on our side could not fetch query from the database. Contact the admin.");
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_PRETTY_PRINT);
+    $conn->close();
+    die();
+}
+
+//Continue code after auth is successfull....
+
+if ($result = $conn -> query("SELECT * FROM access, file_db WHERE access.id = file_db.owner_id AND access.token = '". $token ."' AND file_db.file_name = '". $file ."'")) {
+
+  //Converting output to array
+  $db_output = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+  //Check if provided token is the same as database token, if empty will reject.
+  if($db_output['file_name'] == $file){
+    //Set Authentication status as true
+    echo "file exists";
+  //If not authenticated throw the error
+  }else{
+    $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"file_does_not_exist", "error_details" => "Provided file does not exist on our server");
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, JSON_PRETTY_PRINT);
+    $conn->close();
+    die();
+  }
+
+  // Free result set
+  $result -> free_result();
+} else {
+    $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"query_failed", "error_details" => "MYSQL on our side could not fetch query from the database. Contact the admin.");
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, JSON_PRETTY_PRINT);
+    $conn->close();
     die();
 }
 
 
-//Continue code after auth is successfull....
+
 
 
 //End connection after running
-$conn->close();
+
+  $conn->close();
 
 // if token exists in database
 // check is file
