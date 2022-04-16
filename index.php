@@ -5,25 +5,27 @@ header('Content-Type: application/json');
 $c = include('config.php');
 
 
-
 //Get the request method from the $_SERVER
 //Print the request method out on to the page.
 
-//Checking if user has provided token in GET
+//ERROR HANDLING
 if(!$_GET['token']){
     $data = array("get_status"=>"failure", "token_provided"=>"null", "file" => "not_checked", "error_code"=>"token_not_provided", "error_details" => "Token was not provided in the request");
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_PRETTY_PRINT);
     die();
+//TOKEN EXISTS
 } else {
     //Token variable with bullshit removed
     $token = trim($_GET['token'], '"');
 }
 
-//Checking if user has provided file name in GET
+//FILE EXISTS
 if($_GET['file']){
     //File variable with bullshit removed
     $file = trim($_GET['file'], '"');
+
+//ERROR HANDLING
 }else{
     $data = array("get_status"=>"failure", "token_provided"=>$token, "file_name"=>"null", "error_code"=>"file_not_provided", "error_details" => "File name was not provided in the request");
     header('Content-Type: application/json; charset=utf-8');
@@ -52,7 +54,8 @@ if ($result = $conn -> query("SELECT * FROM `access` WHERE token = '". $token ."
   if($db_output['token'] == $token){
     //Set Authentication status as true
     $auth = true;
-  //If not authenticated throw the error
+
+  //ERROR HANDLING
   }else{
     $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"token_invalid", "error_details" => "Provided token does not exist in our database");
     header('Content-Type: application/json; charset=utf-8');
@@ -63,6 +66,7 @@ if ($result = $conn -> query("SELECT * FROM `access` WHERE token = '". $token ."
 
   // Free result set
   $result -> free_result();
+  //ERROR HANDLING
 } else {
     $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"query_failed", "error_details" => "MYSQL on our side could not fetch query from the database. Contact the admin.");
     header('Content-Type: application/json; charset=utf-8');
@@ -72,7 +76,6 @@ if ($result = $conn -> query("SELECT * FROM `access` WHERE token = '". $token ."
 }
 
 //Continue code after auth is successfull....
-
 if ($result = $conn -> query("SELECT * FROM access, file_db WHERE access.id = file_db.owner_id AND access.token = '". $token ."' AND file_db.file_name = '". $file ."'")) {
 
   //Converting output to array
@@ -80,9 +83,25 @@ if ($result = $conn -> query("SELECT * FROM access, file_db WHERE access.id = fi
 
   //Check if provided token is the same as database token, if empty will reject.
   if($db_output['file_name'] == $file){
-    //Set Authentication status as true
-    echo "file exists";
-  //If not authenticated throw the error
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename=' . $file);
+    $url = 'https://cdn.leow.live/get_file.php';
+    $data = array('token' => $token, 'file_name_system' => $db_output['file_name_system']);
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        )
+    );
+
+    $context  = stream_context_create($options);
+	$result = file_get_contents($url, false, $context);
+	if ($result === FALSE) { /* Handle error */ echo "test";}
+    echo $result;
+
+
+  //ERROR HANDLING
   }else{
     $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"file_does_not_exist", "error_details" => "Provided file does not exist on our server");
     header('Content-Type: application/json; charset=utf-8');
@@ -91,8 +110,7 @@ if ($result = $conn -> query("SELECT * FROM access, file_db WHERE access.id = fi
     die();
   }
 
-  // Free result set
-  $result -> free_result();
+
 } else {
     $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"query_failed", "error_details" => "MYSQL on our side could not fetch query from the database. Contact the admin.");
     header('Content-Type: application/json; charset=utf-8');
@@ -107,7 +125,7 @@ if ($result = $conn -> query("SELECT * FROM access, file_db WHERE access.id = fi
 
 //End connection after running
 
-  $conn->close();
+$conn->close();
 
 // if token exists in database
 // check is file
