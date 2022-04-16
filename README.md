@@ -25,8 +25,8 @@ file_db
 File Stucture
 
 assume base /var/www/html/  
-index.php will be in /var/www/html/cdn/cdn/  
-files will be stored in /var/www/html/cdn/ (remember to add .htaccess deny from all to that folder)  
+index.php will be in /var/www/html/cdn/cdn/index.php  
+files will be stored in /var/www/html/cdn/some_random_generated_file_name (remember to add .htaccess deny from all to that folder)  
 
 
 https://ip.domain/?token=xxxxx&file="xxx.xx"  
