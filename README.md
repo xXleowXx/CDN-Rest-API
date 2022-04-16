@@ -8,29 +8,29 @@ Thanks to token auth and storing the files in random names, different user can s
 MYSQL tables:
 
 access
-+----+-------+----------+------------+
-| id | token | username | file_limit |
-+----+-------+----------+------------+
-| x  | xxxxx | xxxxx    |        120 |
-+----+-------+----------+------------+
+
+| id | token | username |
+| :---         |     :---:      |          ---: |
+| 1  | xxxxxxxxx     | xxxxxxx    |
 
 file_db
+  
+| id | file_nam | file_name_storage | owner_id |
+| :---         |     :---:      |     :---:      |         ---: |
+| 1  | somefilename.exe  | randomly generated name    | x    |
 
-+----+------------------+-------------------------+----------+
-| id |    file_name     |    file_name_storage    | owner_id |
-+----+------------------+-------------------------+----------+
-| x  | somefilename.exe | randomly generated name | x        |
-+----+------------------+-------------------------+----------+
+
+
 
 File Stucture
 
-assume base /var/www/html/
-index.php will be in /var/www/html/cdn/cdn/
-files will be stored in /var/www/html/cdn/ (remember to add .htaccess deny from all to that folder)
+assume base /var/www/html/  
+index.php will be in /var/www/html/cdn/cdn/  
+files will be stored in /var/www/html/cdn/ (remember to add .htaccess deny from all to that folder)  
 
 
-https://ip.domain/?token=xxxxx&file="xxx.xx"
+https://ip.domain/?token=xxxxx&file="xxx.xx"  
 
 
-ToDo:
-Add upload option, as currently there is no way to imput files to the system automatically. 
+ToDo:  
+Add upload option, as currently there is no way to imput files to the system automatically.   
