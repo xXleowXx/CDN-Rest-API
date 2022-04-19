@@ -22,7 +22,7 @@ if(!$_POST['token']){
 } else {
     //Token variable with bullshit removed
 
-    echo "\n.....................\n";
+  	echo "\n.....................\n";
     echo $_POST['token'] . "\n";
     echo ".....................\n";
 
@@ -113,4 +113,4 @@ if($_POST['file_name_system']){
     die();
 }
 
-?> 
+?>
