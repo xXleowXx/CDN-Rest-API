@@ -70,6 +70,32 @@ if(file_exists($path . $random_file_location)){
   $random_file_location = substr(bin2hex($random), 0, 64);
 }
 
+
+if ($result = $conn -> query("SELECT * FROM access, file_db WHERE access.id = file_db.owner_id AND access.token = '". $token ."' AND file_db.file_name = '". $file ."'")) {
+	$db_output = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    if($db_output['file_name'] == $file){
+        if(!empty($tmp_file)){
+        $conn -> query("INSERT INTO `file_db`(`owner_id`, `file_name`, `file_name_system`) VALUES ('" . $id ."','" . $file ."','". $db_output['file_name_system'] ."') ON DUPLICATE KEY UPDATE file_name_system='". $random_file_location ."'");
+        if($result = $conn -> query("SELECT * FROM `file_db` WHERE owner_id = '". $id ."' AND file_name_system = '". $random_file_location ."'")) {
+          move_uploaded_file($tmp_file,$path.$random_file_location);
+          $data = array("get_status"=>"success", "token_provided"=>$token,"file_name"=> $file, "success_code"=>"upload_successfull");
+          header('Content-Type: application/json; charset=utf-8');
+          echo json_encode($data, JSON_PRETTY_PRINT);
+          $result -> free_result();
+          $conn->close();
+          die();
+    }
+
+} else {
+    $data = array("get_status"=>"failure", "token_provided"=>$token,"file_name"=> $file, "error_code"=>"query_failed", "error_details" => "MYSQL on our side could not fetch query from the database. Contact the admin.");
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, JSON_PRETTY_PRINT);
+    $conn->close();
+    die();
+}
+}
+}
+
 if(!empty($tmp_file)){
 	$conn -> query("INSERT INTO `file_db`(`owner_id`, `file_name`, `file_name_system`) VALUES ('" . $id ."','" . $file ."','". $random_file_location ."')");
 	if($result = $conn -> query("SELECT * FROM `file_db` WHERE owner_id = '". $id ."' AND file_name_system = '". $random_file_location ."'")) {
@@ -87,7 +113,7 @@ if(!empty($tmp_file)){
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_PRETTY_PRINT);
     $conn->close();
-    die();
+      die();
 }
 
 
