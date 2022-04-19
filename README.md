@@ -4,15 +4,15 @@
 
 # CDN Rest API
 
-This project creates REST Api for secured upload and download of files from remote server. 
+This project creates REST Api for secured upload and download of files, from remote web server. 
 
-This solution allows multiple users to upload files without file names overlaping and prevent access to files that are not owned by specific user.
+This solution allows multiple users, to upload files without overlaping and prevent access to files that are not owned by specific user.
 
 Thanks to token auth and storage with random names it provides security and decreases possibility of breaches. 
 
-It is coded in PHP with addition of MySQL. It has no frontend but in package it will Web Admin Panel. 
+It is coded in PHP with addition of MySQL. It has no frontend but in out service it comes with Web Admin Panel. 
 
-See below for ussage and MySQL table structure. 
+See below for ussage and MySQL tables are includend in repo. 
 
 
 
