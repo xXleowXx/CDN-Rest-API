@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-  
+
 //Load config file
 $c = include('config.php');
 
