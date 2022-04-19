@@ -160,8 +160,8 @@ This section describes types of responses you can get from api when using it.
 ````JSON
 {
     "get_status": "failure",
-    "token_provided": xxxxxxxxx,
-    "file_name": xxxx.xx,
+    "token_provided": "xxxxxxxxx",
+    "file_name": "xxxx.xx",
     "error_code": "file_not_present",
     "error_details": "You have not uploaded any file."
 }
